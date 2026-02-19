@@ -10,7 +10,7 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ theme }) => {
   const styles = getThemeStyles(theme);
-  
+
   // Default Initial State
   const [settings, setSettings] = useState<SiteSettings>({
     copyrightText: "© 2026 S-71 MusicLab. All Rights Reserved.",
@@ -27,6 +27,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
   useEffect(() => {
     const unsubscribe = subscribeToSettings((data) => {
       if (data) {
+        // ফায়ারবেস থেকে আসা ডেটাকে স্টেটে সেট করা হচ্ছে
         setSettings(prev => ({ ...prev, ...data }));
       }
     });
@@ -38,17 +39,17 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
     window.location.hash = '#/admin';
   };
 
-  // Helper: Force URL to have protocol and be clean
-  const processUrl = (url: string | undefined): string | null => {
-    if (!url) return null;
+  // Helper: URL ক্লিন করার ফাংশন
+  const processUrl = (url: any): string | null => {
+    if (!url || typeof url !== 'string') return null;
     const cleanUrl = url.trim();
     if (cleanUrl.length === 0) return null;
-    
+
     if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) return cleanUrl;
     return `https://${cleanUrl}`;
   };
 
-  // Define social links array dynamically based on current settings
+  // সোশ্যাল আইকনগুলোর লিস্ট
   const socialLinks = [
     { icon: Facebook, url: settings.facebookUrl, id: 'fb' },
     { icon: Twitter, url: settings.twitterUrl, id: 'tw' },
@@ -60,13 +61,13 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
   return (
     <footer className={`relative z-10 w-full px-4 pb-4 pt-12 mt-auto text-center ${styles.textMain}`}>
       <div className={`bg-white/5 backdrop-blur-[50px] border border-white/10 max-w-5xl mx-auto rounded-[2.5rem] p-8 shadow-2xl transition-all duration-500`}>
-        
+
         {/* Social Media Section */}
         <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
-          {/* Standard Icons */}
           {socialLinks.map((item) => {
             const validUrl = processUrl(item.url);
-            
+
+            // যদি URL থাকে তবেই আইকন দেখাবে
             if (!validUrl) return null;
 
             return (
@@ -82,7 +83,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
             );
           })}
 
-          {/* Custom Links (Only appear if added in Admin) */}
+          {/* Custom Links (Admin থেকে অ্যাড করলে এখানে আসবে) */}
           {settings.customLinks && settings.customLinks.map((link) => {
              const validCustomUrl = processUrl(link.url);
              if (!validCustomUrl) return null;
@@ -97,7 +98,6 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
                  className={`p-3 rounded-full transition-all duration-300 hover:scale-110 hover:bg-white/10 ${styles.iconBg} group relative shadow-lg cursor-pointer`}
                >
                   <Globe size={20} className="opacity-80 hover:opacity-100" />
-                  {/* Tooltip for custom link name */}
                   <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] bg-black/90 text-white px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
                     {link.label}
                   </span>
@@ -106,18 +106,18 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
           })}
         </div>
 
-        {/* Separator */}
+        {/* Separator Line */}
         <div className={`h-px w-full max-w-md mx-auto mb-6 bg-gradient-to-r from-transparent via-white/10 to-transparent`} />
 
-        {/* Bottom Section: Branding & Copyright */}
+        {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs md:text-sm">
-          
-          {/* Copyright */}
+
+          {/* Copyright Text */}
           <div className={`opacity-60 order-2 md:order-1 ${styles.textSec}`}>
             {settings.copyrightText}
           </div>
 
-          {/* S-71 Studio Branding (Clickable if URL exists) */}
+          {/* S-71 Studio Branding */}
           <div className="flex items-center gap-2 order-1 md:order-2">
             <span className="opacity-50 uppercase tracking-widest text-[10px]">Powered by</span>
             {processUrl(settings.s71StudioUrl) ? (
@@ -138,7 +138,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
 
         </div>
 
-        {/* Admin Secret Link (Visible but Subtle) */}
+        {/* Admin Link */}
         <div className={`absolute bottom-4 right-6 transition-all duration-300 ${styles.textSec} opacity-50 hover:opacity-100`}>
            <button 
              onClick={navigateToAdmin} 
