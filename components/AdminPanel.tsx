@@ -102,7 +102,56 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ theme }) => {
     try {
       // Logic: If Type is Halal, Genre is automatically 'Halal', and we use subGenre for specifics
       const finalGenre = mediaType === 'Halal' ? 'Halal' : genre;
-      const finalSubGenre = mediaType === 'Halal' ? subGenre : undefined;
+        const handleUploadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    const directUrl = convertDriveLink(audioUrl);
+    
+    if (!directUrl) { 
+      setStatus('error'); 
+      setStatusMsg('Invalid URL.'); 
+      return; 
+    }
+
+    try {
+      // Logic: If Type is Halal, Genre is 'Halal', and we use subGenre.
+      // Otherwise, subGenre is an empty string to avoid Firebase error.
+      const finalGenre = mediaType === 'Halal' ? 'Halal' : genre;
+      const finalSubGenre = mediaType === 'Halal' ? subGenre : ""; 
+
+      await addSongToFirestore({ 
+        title, 
+        artist, 
+        originalUrl: audioUrl, 
+        directUrl, 
+        imageUrl,
+        lyrics,
+        type: mediaType, 
+        genre: finalGenre,
+        subGenre: finalSubGenre 
+      });
+
+      setStatus('success'); 
+      setStatusMsg('Track added!'); 
+
+      // ফর্ম খালি করার জন্য নিচের লাইনগুলো রাখা জরুরি
+      setTitle(''); 
+      setArtist(''); 
+      setAudioUrl(''); 
+      setImageUrl(''); 
+      setLyrics('');
+      
+      setTimeout(() => { 
+        setStatus('idle'); 
+        setStatusMsg(''); 
+      }, 3000);
+
+    } catch (error: any) { 
+      setStatus('error'); 
+      setStatusMsg(error.message); 
+    }
+  };
+
 
       await addSongToFirestore({ 
         title, 
