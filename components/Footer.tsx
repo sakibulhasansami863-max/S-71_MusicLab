@@ -64,47 +64,22 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
 
         {/* Social Media Section */}
         <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
-          {socialLinks.map((item) => {
-            const validUrl = processUrl(item.url);
+  {socialLinks.map((item) => {
+    if (!item.url) return null;
+    return (
+       <a 
+          key={item.id} 
+          href={item.url} 
+          target="_blank"
+          rel="noopener noreferrer" 
+          className={`p-3 rounded-full transition-all duration-300 ${styles.iconBg} hover:scale-110 hover:bg-white/10 opacity-100 cursor-pointer shadow-lg`}
+        >
+          <item.icon size={20} />
+        </a>
+    );
+  })}
+</div>
 
-            // যদি URL থাকে তবেই আইকন দেখাবে
-            if (!validUrl) return null;
-
-            return (
-               <a 
-                  key={item.id} 
-                  href={validUrl} 
-                  target="_blank"
-                  rel="noopener noreferrer" 
-                  className={`p-3 rounded-full transition-all duration-300 ${styles.iconBg} hover:scale-110 hover:bg-white/10 opacity-100 cursor-pointer shadow-lg`}
-                >
-                  <item.icon size={20} />
-                </a>
-            );
-          })}
-
-          {/* Custom Links (Admin থেকে অ্যাড করলে এখানে আসবে) */}
-          {settings.customLinks && settings.customLinks.map((link) => {
-             const validCustomUrl = processUrl(link.url);
-             if (!validCustomUrl) return null;
-
-             return (
-               <a 
-                 key={link.id}
-                 href={validCustomUrl} 
-                 target="_blank" 
-                 rel="noopener noreferrer" 
-                 title={link.label}
-                 className={`p-3 rounded-full transition-all duration-300 hover:scale-110 hover:bg-white/10 ${styles.iconBg} group relative shadow-lg cursor-pointer`}
-               >
-                  <Globe size={20} className="opacity-80 hover:opacity-100" />
-                  <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] bg-black/90 text-white px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
-                    {link.label}
-                  </span>
-               </a>
-             );
-          })}
-        </div>
 
         {/* Separator Line */}
         <div className={`h-px w-full max-w-md mx-auto mb-6 bg-gradient-to-r from-transparent via-white/10 to-transparent`} />
