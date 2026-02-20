@@ -97,41 +97,28 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ theme }) => {
   const handleUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
-    const directUrl = convertDriveLink(audioUrl);
-    if (!directUrl) { setStatus('error'); setStatusMsg('Invalid URL.'); return; }
-    try {
-      // Logic: If Type is Halal, Genre is automatically 'Halal', and we use subGenre for specifics
-      const finalGenre = mediaType === 'Halal' ? 'Halal' : genre;
-        const handleUploadSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('loading');
-    const directUrl = convertDriveLink(audioUrl);
-    
-    if (!directUrl) { 
-      setStatus('error'); 
-      setStatusMsg('Invalid URL.'); 
-      return; 
-    }
+    // এই অংশটুকু Admin.tsx এ আগের ভুল কোড সরিয়ে বসান
+try {
+  const directUrl = convertDriveLink(audioUrl);
+  if (!directUrl) { setStatus('error'); setStatusMsg('Invalid URL.'); return; }
 
-    try {
-      // Logic: If Type is Halal, Genre is 'Halal', and we use subGenre.
-      // Otherwise, subGenre is an empty string to avoid Firebase error.
-      const finalGenre = mediaType === 'Halal' ? 'Halal' : genre;
-      const finalSubGenre = mediaType === 'Halal' ? subGenre : ""; 
+  await addSongToFirestore({ 
+    title, 
+    artist, 
+    originalUrl: audioUrl, 
+    directUrl, 
+    imageUrl,
+    lyrics,
+    type: mediaType, 
+    // যদি Halal হয় তবে Halal, নাহলে সাধারণ জেনার
+    genre: mediaType === 'Halal' ? 'Halal' : genre, 
+    // সরাসরি UI এর subGenre পাঠিয়ে দিন, firebase.ts বাকিটা সামলে নেবে
+    subGenre: subGenre 
+  });
 
-      await addSongToFirestore({ 
-        title, 
-        artist, 
-        originalUrl: audioUrl, 
-        directUrl, 
-        imageUrl,
-        lyrics,
-        type: mediaType, 
-        genre: finalGenre,
-        subGenre: finalSubGenre 
-      });
+  setStatus('success');
+  // বাকি ফর্ম রিসেট কোড...
 
-      setStatus('success'); 
       setStatusMsg('Track added!'); 
 
       // ফর্ম খালি করার জন্য নিচের লাইনগুলো রাখা জরুরি
