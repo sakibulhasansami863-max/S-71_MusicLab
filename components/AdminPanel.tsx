@@ -139,25 +139,6 @@ try {
     }
   };
 
-
-      await addSongToFirestore({ 
-        title, 
-        artist, 
-        originalUrl: audioUrl, 
-        directUrl, 
-        imageUrl,
-        lyrics,
-        type: mediaType, 
-        genre: finalGenre,
-        subGenre: finalSubGenre 
-      });
-      setStatus('success'); setStatusMsg('Track added!'); 
-      // Reset Form
-      setTitle(''); setArtist(''); setAudioUrl(''); setImageUrl(''); setLyrics('');
-      setTimeout(() => { setStatus('idle'); setStatusMsg(''); }, 3000);
-    } catch (error: any) { setStatus('error'); setStatusMsg(error.message); }
-  };
-
   const handleSettingsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
