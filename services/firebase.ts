@@ -88,9 +88,6 @@ export const addSongToFirestore = async (songData: Omit<Song, 'id' | 'createdAt'
   });
 };
 
-  await addDoc(collection(db, 'tracks'), finalSongData);
-};
-
 export const incrementSongPlayCount = async (songId: string) => {
   if (!db) return;
   const songRef = doc(db, 'tracks', songId);
